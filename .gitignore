@@ -1,0 +1,10 @@
+*.log
+*.tmp
+*.bak
+.idea/
+.vscode/
+node_modules/
+!docs/
+!scripts/
+!database/baseline/
+!config/
