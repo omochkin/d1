@@ -1,0 +1,8 @@
+Extracting baseline for schema: penprod
+=========================================
+Extracting tables...
+-- Extracted: CUSTOMERS
+-- Extracted: ORDERS
+-- Extracted: ORDER_ITEMS
+-- Extracted: SHIPPING_ADDRESSES
+
