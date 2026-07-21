@@ -1,5 +1,35 @@
 
-  CREATE OR REPLACE EDITIONABLE PACKAGE BODY "PKG_ORDER_MGMT" AS
+  CREATE OR REPLACE EDITIONABLE PACKAGE "PKG_ORDER_MGMT" AS
+
+    -- ========================================================================
+    -- Baseline Procedures
+    -- ========================================================================
+
+    PROCEDURE INSERT_ORDER(
+        p_customer_id IN NUMBER,
+        p_order_date IN DATE,
+        p_total_amount IN NUMBER,
+        p_order_id OUT NUMBER,
+        p_status OUT VARCHAR2,
+        p_message OUT VARCHAR2
+    );
+
+    PROCEDURE UPDATE_ORDER(
+        p_order_id IN NUMBER,
+        p_total_amount IN NUMBER,
+        p_status OUT VARCHAR2,
+        p_message OUT VARCHAR2
+    );
+
+    PROCEDURE DELETE_ORDER(
+        p_order_id IN NUMBER,
+        p_status OUT VARCHAR2,
+        p_message OUT VARCHAR2
+    );
+
+END PKG_ORDER_MGMT;
+/
+CREATE OR REPLACE EDITIONABLE PACKAGE BODY "PKG_ORDER_MGMT" AS
 
     -- ========================================================================
     -- INSERT_ORDER
@@ -131,3 +161,4 @@
 
 END PKG_ORDER_MGMT;
 /
+

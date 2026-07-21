@@ -104,11 +104,12 @@ SPOOL OFF
 PROMPT Extracting packages...
 
 SPOOL backend/database/baseline/penprod/package/pkg_order_mgmt_spec.sql
-SELECT dbms_metadata.get_ddl('PACKAGE','PKG_ORDER_MGMT') FROM dual;
+ddl PKG_ORDER_MGMT PACKAGE
 SPOOL OFF
 
+echo '-----------------------------------------------------------------------'
 SPOOL backend/database/baseline/penprod/package/pkg_order_mgmt_body.sql
-SELECT dbms_metadata.get_ddl('PACKAGE_BODY', 'PKG_ORDER_MGMT') FROM dual;
+ddl PKG_ORDER_MGMT 'PACKAGE BODY'
 SPOOL OFF
 
 PROMPT =========================================
