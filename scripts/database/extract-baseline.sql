@@ -115,5 +115,5 @@ PROMPT =========================================
 PROMPT Baseline extraction complete.
 PROMPT Review files in backend/database/baseline/penprod/
 PROMPT Then: git add . 
-PROMPT       git commit -m "baseline: extract current penprod schema <v2>"
+PROMPT       git commit -m "baseline: extract current penprod schema"
 PROMPT =========================================
