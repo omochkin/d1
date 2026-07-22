@@ -5,7 +5,7 @@ SPOOL backend/changes/SYS-0001/backup/pkg_order_mgmt_spec_&v_ts..bkp
 DDL PKG_ORDER_MGMT PACKAGE
 SPOOL OFF
 SPOOL backend/changes/SYS-0001/backup/pkg_order_mgmt_body_&v_ts..bkp
-DDL PKG_ORDER_MGMT ‘PACKAGE BODY’
+DDL PKG_ORDER_MGMT 'PACKAGE BODY'
 SPOOL OFF
 PROMPT Backup complete: backup/pkg_order_mgmt_*_&v_ts..bkp
 
