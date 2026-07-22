@@ -1,0 +1,16 @@
+
+  CREATE OR REPLACE EDITIONABLE PACKAGE "G1DEV"."PKG_ORDER_MGMT" AS
+    -- Baseline (already in DEV -- do not remove)
+    PROCEDURE INSERT_ORDER(p_customer_id IN NUMBER, p_order_date IN DATE,
+        p_total_amount IN NUMBER, p_order_id OUT NUMBER,
+        p_status OUT VARCHAR2, p_message OUT VARCHAR2);
+    PROCEDURE UPDATE_ORDER(p_order_id IN NUMBER, p_total_amount IN NUMBER,
+        p_status OUT VARCHAR2, p_message OUT VARCHAR2);
+    PROCEDURE DELETE_ORDER(p_order_id IN NUMBER,
+        p_status OUT VARCHAR2, p_message OUT VARCHAR2);
+    -->>> BEGIN CHANGE: bugfix/SYS-0001
+    PROCEDURE GET_ORDER_STATUS(
+        p_order_id IN NUMBER, p_status OUT VARCHAR2, p_message OUT VARCHAR2);
+    --<<< END CHANGE: bugfix/SYS-0001
+END PKG_ORDER_MGMT;
+/
