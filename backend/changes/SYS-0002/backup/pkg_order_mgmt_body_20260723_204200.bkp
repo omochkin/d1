@@ -1,0 +1,124 @@
+
+  CREATE OR REPLACE EDITIONABLE PACKAGE BODY "G1DEV"."PKG_ORDER_MGMT" AS
+
+    -- Baseline: INSERT_ORDER (unchanged -- do not modify)
+    PROCEDURE INSERT_ORDER(p_customer_id IN NUMBER, p_order_date IN DATE,
+        p_total_amount IN NUMBER, p_order_id OUT NUMBER,
+        p_status OUT VARCHAR2, p_message OUT VARCHAR2) AS
+    BEGIN
+        INSERT INTO ORDERS (CUSTOMER_ID, ORDER_DATE, TOTAL_AMOUNT, STATUS)
+        VALUES (p_customer_id, p_order_date, p_total_amount, 'PENDING')
+        RETURNING ORDER_ID INTO p_order_id;
+        COMMIT;
+        p_status  := 'SUCCESS';
+        p_message := 'Order '||p_order_id||' created';
+    EXCEPTION WHEN OTHERS THEN
+        ROLLBACK;
+        p_status  := 'ERROR';
+        p_message := 'Error: '||SQLERRM;
+    END INSERT_ORDER;
+
+    -->>> BEGIN CHANGE: bugfix/SYS-0003
+    -- UPDATE_ORDER: added p_ship_date parameter
+    PROCEDURE UPDATE_ORDER(p_order_id IN NUMBER, p_total_amount IN NUMBER,
+        p_ship_date IN DATE,
+        p_status OUT VARCHAR2, p_message OUT VARCHAR2) AS
+    BEGIN
+        UPDATE ORDERS
+        SET    TOTAL_AMOUNT      = p_total_amount,
+               SHIP_DATE         = p_ship_date,
+               LAST_UPDATED_DATE = SYSDATE
+        WHERE  ORDER_ID = p_order_id;
+        IF SQL%ROWCOUNT = 0 THEN
+            p_status  := 'NOT_FOUND';
+            p_message := 'Order '||p_order_id||' does not exist';
+            RETURN;
+        END IF;
+        COMMIT;
+        p_status  := 'SUCCESS';
+        p_message := 'Order '||p_order_id||' updated';
+    EXCEPTION WHEN OTHERS THEN
+        ROLLBACK;
+        p_status  := 'ERROR';
+        p_message := 'Error: '||SQLERRM;
+    END UPDATE_ORDER;
+    --<<< END CHANGE: bugfix/SYS-0003
+
+    -- Baseline: DELETE_ORDER (unchanged -- do not modify)
+    PROCEDURE DELETE_ORDER(p_order_id IN NUMBER,
+        p_status OUT VARCHAR2, p_message OUT VARCHAR2) AS
+    BEGIN
+        DELETE FROM ORDERS WHERE ORDER_ID = p_order_id;
+        IF SQL%ROWCOUNT = 0 THEN
+            p_status  := 'NOT_FOUND';
+            p_message := 'Order '||p_order_id||' does not exist';
+            RETURN;
+        END IF;
+        COMMIT;
+        p_status  := 'SUCCESS';
+        p_message := 'Order '||p_order_id||' deleted';
+    EXCEPTION WHEN OTHERS THEN
+        ROLLBACK;
+        p_status  := 'ERROR';
+        p_message := 'Error: '||SQLERRM;
+    END DELETE_ORDER;
+
+    -- SYS-0001: GET_ORDER_STATUS (unchanged -- do not modify)
+    PROCEDURE GET_ORDER_STATUS(p_order_id IN NUMBER,
+        p_status OUT VARCHAR2, p_message OUT VARCHAR2) AS
+        v_status VARCHAR2(100);
+    BEGIN
+        SELECT NVL(STATUS,'UNKNOWN') INTO v_status
+        FROM   ORDERS WHERE ORDER_ID = p_order_id;
+        p_status  := 'SUCCESS';
+        p_message := 'Order '||p_order_id||' status: '||v_status;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            p_status  := 'NOT_FOUND';
+            p_message := 'Order '||p_order_id||' does not exist';
+        WHEN OTHERS THEN
+            p_status  := 'ERROR';
+            p_message := 'Error: '||SQLERRM;
+    END GET_ORDER_STATUS;
+
+    -->>> BEGIN CHANGE: bugfix/SYS-0003
+    PROCEDURE CANCEL_ORDER(p_order_id IN NUMBER, p_reason IN VARCHAR2,
+        p_cancelled_by IN VARCHAR2, p_status OUT VARCHAR2, p_message OUT VARCHAR2) AS
+        v_current_status VARCHAR2(100);
+    BEGIN
+        BEGIN
+            SELECT NVL(STATUS,'UNKNOWN') INTO v_current_status
+            FROM   ORDERS WHERE ORDER_ID = p_order_id;
+        EXCEPTION WHEN NO_DATA_FOUND THEN
+            p_status  := 'NOT_FOUND';
+            p_message := 'Order '||p_order_id||' does not exist';
+            RETURN;
+        END;
+        IF v_current_status IN ('SHIPPED','DELIVERED') THEN
+            p_status  := 'ERROR';
+            p_message := 'Cannot cancel order '||p_order_id||
+                         ' -- status: '||v_current_status;
+            RETURN;
+        END IF;
+        IF v_current_status = 'CANCELLED' THEN
+            p_status  := 'ERROR';
+            p_message := 'Order '||p_order_id||' is already cancelled';
+            RETURN;
+        END IF;
+        UPDATE ORDERS
+        SET    STATUS           = 'CANCELLED',
+               LAST_UPDATED_DATE = SYSDATE
+        WHERE  ORDER_ID = p_order_id;
+        COMMIT;
+        p_status  := 'SUCCESS';
+        p_message := 'Order '||p_order_id||' cancelled by '||
+                     p_cancelled_by||'. Reason: '||p_reason;
+    EXCEPTION WHEN OTHERS THEN
+        ROLLBACK;
+        p_status  := 'ERROR';
+        p_message := 'Error: '||SQLERRM;
+    END CANCEL_ORDER;
+    --<<< END CHANGE: bugfix/SYS-0003
+
+END PKG_ORDER_MGMT;
+/

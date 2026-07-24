@@ -1,6 +1,6 @@
-  CREATE OR REPLACE EDITIONABLE PACKAGE PKG_ORDER_MGMT AS
+
+  CREATE OR REPLACE EDITIONABLE PACKAGE "G1DEV"."PKG_ORDER_MGMT" AS
     -- 2025-01-15  SYS-0002  User_A
-    -- 2025-01-15  SYS-0001  User_A
     -- Baseline (already in DEV -- do not remove)
     PROCEDURE INSERT_ORDER(p_customer_id IN NUMBER, p_order_date IN DATE,
         p_total_amount IN NUMBER, p_order_id OUT NUMBER,
