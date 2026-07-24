@@ -1,6 +1,7 @@
 *.log
 *.tmp
 *.bak
+.bkp
 .idea/
 .vscode/
 node_modules/
